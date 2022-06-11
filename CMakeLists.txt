@@ -8,6 +8,8 @@ set(SOURCES
     src/main.c
     src/vm.c
     src/vm_bytecode.c
+    src/vm_debug.c
+    src/compiler.c
 )
 
 add_executable(beshfuck ${SOURCES})
@@ -17,7 +19,7 @@ target_compile_options(beshfuck
     -Wall 
     -Wextra 
     -Wpedantic 
-    -Werror
+    $<$<CONFIG:DEBUG>: -Werror>
 )
 
 target_include_directories(beshfuck
