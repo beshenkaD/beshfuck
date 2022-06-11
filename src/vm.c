@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Vm *vm_new(size_t tape_len, Bytecode bc)
+Vm *vm_new(size_t tape_len, Bytecode *bc)
 {
 	Vm *vm = malloc(sizeof(Vm));
 	vm->bc = bc;
@@ -14,9 +14,8 @@ Vm *vm_new(size_t tape_len, Bytecode bc)
 	return vm;
 }
 
-void vm_delete(Vm *vm)
+void vm_free(Vm *vm)
 {
-	vm_bytecode_free(&vm->bc);
 	free(vm->tape);
 	free(vm);
 }
@@ -25,8 +24,8 @@ void vm_do(Vm *vm)
 {
 	size_t c = 0;
 
-	for (size_t i = 0; i < vm->bc.count; i++) {
-		switch (vm->bc.code[i]) {
+	for (size_t i = 0; i < vm->bc->count; i++) {
+		switch (vm->bc->code[i]) {
 		case OP_INC:
 			vm->tape[vm->pc]++;
 			break;
@@ -48,10 +47,10 @@ void vm_do(Vm *vm)
 		case OP_LSTART:
 			if (vm->tape[vm->pc] == 0) {
 				i++;
-				while (c > 0 || vm->bc.code[i] != OP_LEND) {
-					if (vm->bc.code[i] == OP_LSTART)
+				while (c > 0 || vm->bc->code[i] != OP_LEND) {
+					if (vm->bc->code[i] == OP_LSTART)
 						c++;
-					else if (vm->bc.code[i] == OP_LEND)
+					else if (vm->bc->code[i] == OP_LEND)
 						c--;
 					i++;
 				}
@@ -61,10 +60,10 @@ void vm_do(Vm *vm)
 			if (vm->tape[vm->pc] != 0) {
 				i--;
 
-				while (c > 0 || vm->bc.code[i] != OP_LSTART) {
-					if (vm->bc.code[i] == OP_LEND)
+				while (c > 0 || vm->bc->code[i] != OP_LSTART) {
+					if (vm->bc->code[i] == OP_LEND)
 						c++;
-					else if (vm->bc.code[i] == OP_LSTART)
+					else if (vm->bc->code[i] == OP_LSTART)
 						c--;
 					i--;
 				}

@@ -22,15 +22,15 @@ typedef enum {
 } OpCodes;
 
 typedef struct {
-	Bytecode bc;
+	Bytecode *bc;
 
 	int32_t *tape;
 	size_t pc;
 	size_t tape_len;
 } Vm;
 
-Vm *vm_new(size_t tape_len, Bytecode bc);
-void vm_delete(Vm *vm);
+Vm *vm_new(size_t tape_len, Bytecode *bc);
+void vm_free(Vm *vm);
 void vm_do(Vm *vm);
 void test();
 
