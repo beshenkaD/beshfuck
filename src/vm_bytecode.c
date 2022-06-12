@@ -1,4 +1,5 @@
 #include "vm_bytecode.h"
+#include "vm_constants.h"
 #include <stdlib.h>
 
 #define INITIAL_CAPACITY 32
@@ -8,6 +9,7 @@ void vm_bytecode_init(Bytecode *bc)
 	bc->code = malloc(INITIAL_CAPACITY * sizeof(uint8_t));
 	bc->count = 0;
 	bc->capacity = INITIAL_CAPACITY;
+	vm_constants_init(&bc->consts);
 }
 
 void vm_bytecode_push(Bytecode *bc, uint8_t opcode)
@@ -20,9 +22,16 @@ void vm_bytecode_push(Bytecode *bc, uint8_t opcode)
 	bc->code[bc->count++] = opcode;
 }
 
+size_t vm_bytecode_add_const(Bytecode *bc, Value val)
+{
+	vm_constants_push(&bc->consts, val);
+	return bc->consts.count - 1;
+}
+
 void vm_bytecode_free(Bytecode *bc)
 {
 	free(bc->code);
 	bc->code = NULL;
 	bc->count = bc->capacity = 0;
+	vm_constants_free(&bc->consts);
 }

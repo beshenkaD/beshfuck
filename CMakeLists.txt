@@ -9,6 +9,8 @@ set(SOURCES
     src/vm.c
     src/vm_bytecode.c
     src/vm_debug.c
+    src/vm_procedures.c
+    src/vm_constants.c
     src/compiler.c
 )
 

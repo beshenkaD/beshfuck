@@ -1,10 +1,19 @@
 #include "vm_debug.h"
 #include "vm.h"
+#include "vm_bytecode.h"
+#include <stdio.h>
 
 static size_t simple(const char *name, size_t offset, FILE *f)
 {
 	fprintf(f, "%s\n", name);
 	return offset + 1;
+}
+
+static size_t call(Bytecode *bc, size_t offset, FILE *f)
+{
+	fprintf(f, "%s\t", "OP_CALL");
+	fprintf(f, "%s\n", bc->consts.values[offset]);
+	return offset + 2;
 }
 
 static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
@@ -29,15 +38,8 @@ static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 		return simple("OP_LSTART", offset, f);
 	case OP_LEND:
 		return simple("OP_LEND", offset, f);
-
-		// case OP_PSTART:
-		// 	break;
-		// case OP_PEND:
-		// 	break;
-		// case OP_CALL:
-		// 	break;
-		// case OP_SPAWN:
-		// 	break;
+	case OP_CALL:
+		return call(bc, offset, f);
 	}
 
 	fprintf(f, "Unknown opcode %d\n", opcode);
