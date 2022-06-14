@@ -9,9 +9,11 @@ set(SOURCES
     src/vm.c
     src/vm_bytecode.c
     src/vm_debug.c
-    src/vm_procedures.c
     src/vm_constants.c
+    src/vm_procedure.c
     src/compiler.c
+    src/map.c
+    src/interpreter.c
 )
 
 add_executable(beshfuck ${SOURCES})

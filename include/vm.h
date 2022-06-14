@@ -1,38 +1,38 @@
 #ifndef VM_H
 #define VM_H
 
+#include "map.h"
 #include "vm_bytecode.h"
-#include "vm_procedures.h"
+#include "vm_procedure.h"
 #include <stddef.h>
 #include <stdint.h>
 
-enum {
-	/*Name     Description                           Args       */
-	OP_INC,	   /*  Increment                                -   */
-	OP_DEC,	   /*  Decrement                                -   */
-	OP_IN,	   /*  Input                                    -   */
-	OP_OUT,	   /*  Output                                   -   */
-	OP_NEXT,   /*  Next cell                                -   */
-	OP_PREV,   /*  Previous cell                            -   */
-	OP_LSTART, /*  Loop start                               -   */
-	OP_LEND,   /*  Loop end                                 -   */
-	OP_CALL,
-	OP_SPAWN,
-};
+#define MAX_FRAMES 64
+
+typedef enum {
+	INTERPRET_OK,
+	INTERPRET_COMPILE_ERROR,
+	INTERPRET_RUNTIME_ERROR,
+} InterpretResult;
 
 typedef struct {
-	Bytecode *bc;
-	Procedures procs;
+	Procedure *proc;
+	uint8_t *ip;
+} CallFrame;
+
+typedef struct {
+	CallFrame frames[MAX_FRAMES];
+	size_t frame_count;
+
+	Map *procedures;
 
 	int32_t *tape;
 	size_t pc;
 	size_t tape_len;
 } Vm;
 
-Vm *vm_new(size_t tape_len, Bytecode *bc);
+Vm *vm_new(size_t tape_len);
 void vm_free(Vm *vm);
-void vm_do(Vm *vm);
-void vm_do_bytecode(Vm *vm, Bytecode *bc);
-void test();
+InterpretResult vm_interpret(Vm *vm, const char *source);
 
 #endif

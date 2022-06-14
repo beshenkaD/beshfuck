@@ -9,7 +9,7 @@ void vm_bytecode_init(Bytecode *bc)
 	bc->code = malloc(INITIAL_CAPACITY * sizeof(uint8_t));
 	bc->count = 0;
 	bc->capacity = INITIAL_CAPACITY;
-	vm_constants_init(&bc->consts);
+	vm_constants_init(&bc->constants);
 }
 
 void vm_bytecode_push(Bytecode *bc, uint8_t opcode)
@@ -22,10 +22,10 @@ void vm_bytecode_push(Bytecode *bc, uint8_t opcode)
 	bc->code[bc->count++] = opcode;
 }
 
-size_t vm_bytecode_add_const(Bytecode *bc, Value val)
+size_t vm_bytecode_add_constant(Bytecode *bc, char *val)
 {
-	vm_constants_push(&bc->consts, val);
-	return bc->consts.count - 1;
+	vm_constants_push(&bc->constants, val);
+	return bc->constants.count - 1;
 }
 
 void vm_bytecode_free(Bytecode *bc)
@@ -33,5 +33,5 @@ void vm_bytecode_free(Bytecode *bc)
 	free(bc->code);
 	bc->code = NULL;
 	bc->count = bc->capacity = 0;
-	vm_constants_free(&bc->consts);
+	vm_constants_free(&bc->constants);
 }

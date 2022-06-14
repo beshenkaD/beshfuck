@@ -9,10 +9,10 @@ static size_t simple(const char *name, size_t offset, FILE *f)
 	return offset + 1;
 }
 
-static size_t call(Bytecode *bc, size_t offset, FILE *f)
+static size_t operand(Bytecode *bc, const char *name, size_t offset, FILE *f)
 {
-	fprintf(f, "%s\t", "OP_CALL");
-	fprintf(f, "%s\n", bc->consts.values[offset]);
+	uint8_t constant = bc->code[offset + 1];
+	fprintf(f, "%s\t%s\n", name, bc->constants.values[constant]);
 	return offset + 2;
 }
 
@@ -39,7 +39,11 @@ static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 	case OP_LEND:
 		return simple("OP_LEND", offset, f);
 	case OP_CALL:
-		return call(bc, offset, f);
+		return operand(bc, "OP_CALL", offset, f);
+	case OP_RETURN:
+		return simple("OP_RETURN", offset, f);
+	case OP_LOAD:
+		return operand(bc, "OP_LOAD", offset, f);
 	}
 
 	fprintf(f, "Unknown opcode %d\n", opcode);

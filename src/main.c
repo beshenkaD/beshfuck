@@ -1,25 +1,16 @@
-#include "compiler.h"
-#include "vm.h"
-#include "vm_bytecode.h"
+#include "interpreter.h"
 #include <assert.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[])
 {
-	assert(argc >= 2);
-
-	FILE *src = fopen(argv[1], "rb");
-	assert(src);
-
-	Bytecode bc = compiler_do_file(src);
-
-	Vm *vm = vm_new(1000 * 30, &bc);
-
-	vm_do(vm);
-
-	fclose(src);
-	vm_bytecode_free(&bc);
-	vm_free(vm);
+	if (argc == 1) {
+		interpreter_repl();
+	} else if (argc == 2) {
+		interpreter_do_file(argv[1]);
+	} else {
+		return 324;
+	}
 
 	return 0;
 }
