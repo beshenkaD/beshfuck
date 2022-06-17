@@ -26,7 +26,7 @@ typedef struct {
 
 	Map *procedures;
 
-	int32_t *tape;
+	uint8_t *tape;
 	size_t pc;
 	size_t tape_len;
 } Vm;

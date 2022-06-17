@@ -10,7 +10,7 @@
 Vm *vm_new(size_t tape_len)
 {
 	Vm *vm = malloc(sizeof(Vm));
-	vm->tape = calloc(tape_len, sizeof(int32_t));
+	vm->tape = calloc(tape_len, sizeof(uint8_t));
 	vm->tape_len = tape_len;
 	vm->pc = 0;
 
