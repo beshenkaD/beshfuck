@@ -41,6 +41,7 @@ static void call(Vm *vm, Procedure *p)
 }
 
 #define READ_BYTE() (*frame->ip++)
+#define READ_SHORT() (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 #define READ_CONST() (frame->proc->bc.constants.values[READ_BYTE()])
 
 static InterpretResult run(Vm *vm)
@@ -69,13 +70,13 @@ static InterpretResult run(Vm *vm)
 			putchar(vm->tape[vm->pc]);
 			break;
 		case OP_JUMP_IF_ZERO: {
-			uint8_t offset = READ_BYTE();
+			uint8_t offset = READ_SHORT();
 			if (vm->tape[vm->pc] == 0)
 				frame->ip += offset;
 			break;
 		}
 		case OP_LOOP: {
-			uint8_t offset = READ_BYTE();
+			uint8_t offset = READ_SHORT();
 			frame->ip -= offset;
 			break;
 		}
@@ -119,65 +120,3 @@ InterpretResult vm_interpret(Vm *vm, const char *source)
 
 	return r;
 }
-
-// void vm_do_bytecode(Vm *vm, Bytecode *bc)
-// {
-// 	size_t c = 0;
-
-// 	for (size_t i = 0; i < bc->count; i++) {
-// 		switch (bc->code[i]) {
-// 		case OP_INC:
-// 			vm->tape[vm->pc]++;
-// 			break;
-// 		case OP_DEC:
-// 			vm->tape[vm->pc]--;
-// 			break;
-// 		case OP_IN:
-// 			vm->tape[vm->pc] = getchar();
-// 			break;
-// 		case OP_OUT:
-// 			putchar(vm->tape[vm->pc]);
-// 			break;
-// 		case OP_NEXT:
-// 			vm->pc++;
-// 			break;
-// 		case OP_PREV:
-// 			vm->pc--;
-// 			break;
-// 		case OP_LSTART:
-// 			if (vm->tape[vm->pc] == 0) {
-// 				i++;
-// 				while (c > 0 || bc->code[i] != OP_LEND) {
-// 					if (bc->code[i] == OP_LSTART)
-// 						c++;
-// 					else if (bc->code[i] == OP_LEND)
-// 						c--;
-// 					i++;
-// 				}
-// 			}
-// 			break;
-// 		case OP_LEND:
-// 			if (vm->tape[vm->pc] != 0) {
-// 				i--;
-
-// 				while (c > 0 || bc->code[i] != OP_LSTART) {
-// 					if (bc->code[i] == OP_LEND)
-// 						c++;
-// 					else if (bc->code[i] == OP_LSTART)
-// 						c--;
-// 					i--;
-// 				}
-
-// 				i--;
-// 			}
-
-// 			break;
-// 		case OP_CALL:
-// 			break;
-// 		case OP_SPAWN:
-// 			break;
-// 		default:
-// 			break;
-// 		}
-// 	}
-// }

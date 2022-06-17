@@ -146,7 +146,8 @@ static void loop(Procedure *p)
 	// emit jump
 	vm_bytecode_push(&p->bc, OP_JUMP_IF_ZERO);
 	vm_bytecode_push(&p->bc, 0xff);
-	int exit_jump = p->bc.count - 1;
+	vm_bytecode_push(&p->bc, 0xff);
+	int32_t exit_jump = p->bc.count - 2;
 
 	while (!check(TK_RIGHT_SQUARE) && !check(TK_EOF)) {
 		if (check(TK_BANG))
@@ -157,18 +158,20 @@ static void loop(Procedure *p)
 
 	// emit loop
 	vm_bytecode_push(&p->bc, OP_LOOP);
-	int offset = p->bc.count - loop_start + 1;
-	if (offset > UINT8_MAX)
+	int32_t offset = p->bc.count - loop_start + 2;
+	if (offset > UINT16_MAX)
 		error("loop body too large");
 
-	vm_bytecode_push(&p->bc, (uint8_t)offset);
+	vm_bytecode_push(&p->bc, (offset >> 8) & 0xff);
+	vm_bytecode_push(&p->bc, offset & 0xff);
 
 	// patch jump
-	int jump = p->bc.count - exit_jump - 1;
-	if (jump > UINT8_MAX)
+	int jump = p->bc.count - exit_jump - 2;
+	if (jump > UINT16_MAX)
 		error("cant jump that far");
 
-	p->bc.code[exit_jump] = (uint8_t)jump;
+	p->bc.code[exit_jump] = (jump >> 8) & 0xff;
+	p->bc.code[exit_jump + 1] = jump & 0xff;
 
 	consume(TK_RIGHT_SQUARE, "expected ] after loop body");
 }
