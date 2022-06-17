@@ -1,0 +1,8 @@
+[ this program just prints a million using procedures ]
+
+!one{+++++++++++++++++++++++++++++++++++++++++++++++++}
+!zero{++++++++++++++++++++++++++++++++++++++++++++++++}
+
+!print_million{$one.>++++++[>$zero.[-]<-]}
+
+$print_million
