@@ -2,11 +2,11 @@
 #include "vm_bytecode.h"
 #include <stdlib.h>
 
-Procedure *vm_procedure_new()
+Procedure *vm_procedure_new(char *name)
 {
 	Procedure *p = malloc(sizeof(Procedure));
 	vm_bytecode_init(&p->bc);
-	p->name = NULL;
+	p->name = name;
 
 	return p;
 }
@@ -14,5 +14,6 @@ Procedure *vm_procedure_new()
 void vm_procedure_free(Procedure *p)
 {
 	vm_bytecode_free(&p->bc);
+	free(p->name);
 	free(p);
 }

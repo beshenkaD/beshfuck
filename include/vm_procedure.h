@@ -9,7 +9,7 @@ typedef struct {
 	char *name;
 } Procedure;
 
-Procedure *vm_procedure_new();
+Procedure *vm_procedure_new(char *name);
 void vm_procedure_free(Procedure *p);
 
 #endif

@@ -22,6 +22,10 @@ void vm_constants_push(Constants *c, char *val)
 
 void vm_constants_free(Constants *c)
 {
+	for (size_t i = 0; i < c->count; i++) {
+		free(c->values[i]);
+	}
+
 	free(c->values);
 	c->values = NULL;
 	c->count = c->capacity = 0;

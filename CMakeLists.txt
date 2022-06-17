@@ -14,6 +14,7 @@ set(SOURCES
     src/compiler.c
     src/map.c
     src/interpreter.c
+    src/lexer.c
 )
 
 add_executable(beshfuck ${SOURCES})
@@ -24,6 +25,7 @@ target_compile_options(beshfuck
     -Wextra 
     -Wpedantic 
     $<$<CONFIG:DEBUG>: -Werror>
+    $<$<CONFIG:DEBUG>: -Wno-unused-function>
 )
 
 target_include_directories(beshfuck
