@@ -5,7 +5,7 @@
 
 void vm_constants_init(Constants *c)
 {
-	c->values = malloc(INITIAL_CAPACITY * sizeof(uint8_t));
+	c->values = malloc(INITIAL_CAPACITY * sizeof(char *));
 	c->count = 0;
 	c->capacity = INITIAL_CAPACITY;
 }

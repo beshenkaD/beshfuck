@@ -1,10 +1,6 @@
 #include "vm.h"
 #include "compiler.h"
-#include "map.h"
-#include "vm_bytecode.h"
-#include "vm_procedure.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 Vm *vm_new(size_t tape_len)
@@ -97,6 +93,17 @@ static InterpretResult run(Vm *vm)
 
 			frame = &vm->frames[vm->frame_count - 1];
 			break;
+		case OP_LOAD: {
+			// TODO: replace atoi with something less error prone
+			int num = atoi(READ_CONST());
+			if (num > UINT8_MAX || num < 0) {
+				return INTERPRET_RUNTIME_ERROR;
+			}
+
+			vm->tape[vm->pc] = (uint8_t)num;
+
+			break;
+		}
 		}
 	}
 

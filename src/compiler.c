@@ -1,12 +1,8 @@
 #include "compiler.h"
 
 #include "lexer.h"
-#include "map.h"
-#include "vm_bytecode.h"
 #include "vm_debug.h"
-#include "vm_procedure.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -93,6 +89,7 @@ static char *parse_identifier(const char *err)
 
 static void loop(Procedure *p);
 static void call(Procedure *p);
+static void number(Procedure *p);
 
 static void instruction(Procedure *p)
 {
@@ -133,12 +130,14 @@ static void instruction(Procedure *p)
 	case TK_DOLLAR:
 		call(p);
 		break;
+	case TK_EQUALS:
+		number(p);
+		break;
 	default:
 		break;
 	}
 }
 
-// TODO: use uint16_t for jump operand
 static void loop(Procedure *p)
 {
 	int loop_start = p->bc.count;
@@ -203,6 +202,16 @@ static void call(Procedure *p)
 
 	vm_bytecode_push(&p->bc, OP_CALL);
 	vm_bytecode_push(&p->bc, proc);
+}
+
+static void number(Procedure *p)
+{
+	consume(TK_NUMBER, "expected number after =");
+	char *str = copy_string(parser.previous.start, parser.previous.length);
+	size_t n = vm_bytecode_add_constant(&p->bc, str);
+
+	vm_bytecode_push(&p->bc, OP_LOAD);
+	vm_bytecode_push(&p->bc, (uint8_t)n);
 }
 
 Procedure *compiler_do(Vm *vm, const char *source)
