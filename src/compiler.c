@@ -138,17 +138,39 @@ static void instruction(Procedure *p)
 	}
 }
 
+// TODO: use uint16_t for jump operand
 static void loop(Procedure *p)
 {
-	vm_bytecode_push(&p->bc, OP_LSTART);
+	int loop_start = p->bc.count;
+
+	// emit jump
+	vm_bytecode_push(&p->bc, OP_JUMP_IF_ZERO);
+	vm_bytecode_push(&p->bc, 0xff);
+	int exit_jump = p->bc.count - 1;
 
 	while (!check(TK_RIGHT_SQUARE) && !check(TK_EOF)) {
+		if (check(TK_BANG))
+			error("procedure declaration inside loop is not allowed");
+
 		instruction(p);
 	}
 
-	consume(TK_RIGHT_SQUARE, "expected ] after loop body");
+	// emit loop
+	vm_bytecode_push(&p->bc, OP_LOOP);
+	int offset = p->bc.count - loop_start + 1;
+	if (offset > UINT8_MAX)
+		error("loop body too large");
 
-	vm_bytecode_push(&p->bc, OP_LEND);
+	vm_bytecode_push(&p->bc, (uint8_t)offset);
+
+	// patch jump
+	int jump = p->bc.count - exit_jump - 1;
+	if (jump > UINT8_MAX)
+		error("cant jump that far");
+
+	p->bc.code[exit_jump] = (uint8_t)jump;
+
+	consume(TK_RIGHT_SQUARE, "expected ] after loop body");
 }
 
 static void procedure(Vm *vm)

@@ -68,11 +68,17 @@ static InterpretResult run(Vm *vm)
 		case OP_OUT:
 			putchar(vm->tape[vm->pc]);
 			break;
-		case OP_LSTART:
-			// Use jumps?
+		case OP_JUMP_IF_ZERO: {
+			uint8_t offset = READ_BYTE();
+			if (vm->tape[vm->pc] == 0)
+				frame->ip += offset;
 			break;
-		case OP_LEND:
+		}
+		case OP_LOOP: {
+			uint8_t offset = READ_BYTE();
+			frame->ip -= offset;
 			break;
+		}
 		case OP_CALL: {
 			Procedure *p = (Procedure *)map_get(vm->procedures, READ_CONST());
 			assert(p);

@@ -34,10 +34,6 @@ static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 		return simple("OP_NEXT", offset, f);
 	case OP_PREV:
 		return simple("OP_PREV", offset, f);
-	case OP_LSTART:
-		return simple("OP_LSTART", offset, f);
-	case OP_LEND:
-		return simple("OP_LEND", offset, f);
 	case OP_CALL:
 		return operand(bc, "OP_CALL", offset, f);
 	case OP_RETURN:
