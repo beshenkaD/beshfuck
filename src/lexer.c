@@ -74,7 +74,7 @@ static Token number()
 
 static Token identifier()
 {
-	while (isalpha(peek()) || isdigit(peek()))
+	while (isalpha(peek()) || isdigit(peek()) || peek() == '_')
 		advance();
 
 	return make_token(TK_IDENTIFIER);
