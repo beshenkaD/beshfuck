@@ -96,8 +96,6 @@ Token scan_token()
 	if (isdigit(c))
 		return number();
 
-	// clang-format off
-
 	switch (c) {
 	case '+': return make_token(TK_PLUS);
 	case '-': return make_token(TK_MINUS);
@@ -114,8 +112,6 @@ Token scan_token()
 	case '$': return make_token(TK_DOLLAR);
 	case '=': return make_token(TK_EQUALS);
 	}
-
-	// clang-format on
 
 	return make_token(TK_SKIP);
 }
