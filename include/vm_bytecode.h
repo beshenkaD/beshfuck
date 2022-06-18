@@ -6,15 +6,15 @@
 #include <stdint.h>
 
 typedef enum {
-	/*Name     Description                           Args       */
+	/*Name           Description                                Args  */
 	OP_INC,		 /*  Increment                                -   */
 	OP_DEC,		 /*  Decrement                                -   */
 	OP_IN,		 /*  Input                                    -   */
 	OP_OUT,		 /*  Output                                   -   */
 	OP_NEXT,	 /*  Next cell                                -   */
 	OP_PREV,	 /*  Previous cell                            -   */
-	OP_JUMP_IF_ZERO, /* */
-	OP_LOOP,	 /* */
+	OP_JUMP_IF_ZERO, /*  Jump forward                         lenght  */
+	OP_LOOP,	 /*  Jump backwards                       length  */
 	OP_CALL,	 /*  Calls procedure                     Constant */
 	OP_RETURN,	 /*  Return from procedure                        */
 	OP_SPAWN,	 /*  Unknown                                      */
