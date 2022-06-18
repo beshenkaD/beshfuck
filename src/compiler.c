@@ -10,6 +10,7 @@ typedef struct {
 	Token current;
 	Token previous;
 	bool had_error;
+	bool panic;
 } Parser;
 
 Parser parser;
@@ -22,6 +23,11 @@ static void advance()
 
 static void error_at(Token *tk, const char *msg)
 {
+	if (parser.panic)
+		return;
+
+	parser.panic = true;
+
 	fprintf(stderr, "[ Syntax error ]");
 	if (tk->type == TK_EOF)
 		fprintf(stderr, " at end");
@@ -84,6 +90,15 @@ static char *parse_identifier(const char *err)
 	return copy_string(parser.previous.start, parser.previous.length);
 }
 
+static void sync()
+{
+	parser.panic = false;
+
+	while (parser.current.type != TK_EOF) {
+		advance();
+	}
+}
+
 static void loop(Procedure *p);
 static void call(Procedure *p);
 static void number(Procedure *p);
@@ -136,6 +151,9 @@ static void instruction(Procedure *p)
 	default:
 		break;
 	}
+
+	if (parser.panic)
+		sync();
 }
 
 static void loop(Procedure *p)
@@ -222,6 +240,8 @@ Procedure *compiler_do(Vm *vm, const char *source)
 	assert(vm);
 
 	lexer_init(source);
+	parser.panic = false;
+	parser.had_error = false;
 
 	Procedure *main = vm_procedure_new(NULL);
 
