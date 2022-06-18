@@ -27,6 +27,7 @@ make
 ### Build Options
 - ``-DDEBUG_PRINT`` &mdash; prints disassembled bytecode after compiling it (default: ``OFF``).
 - ``-DENABLE_BOUNDS_CHECK`` &mdash; enables or disables bounds checks during execution (default: ``ON``).
+- ``-DUSE_LIBEDIT`` &mdash; uses libedit library for REPL (default: ``ON``).
 
 ## License
 All the code in this repository is released under the WTFPL license. Take a look at the [LICENSE](LICENSE) for more info.

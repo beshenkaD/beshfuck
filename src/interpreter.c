@@ -45,21 +45,3 @@ void interpreter_do_file(const char *path)
 	vm_free(vm);
 	exit(res);
 }
-
-void interpreter_repl()
-{
-	Vm *vm = vm_new(30000);
-
-	char line[1024];
-	for (;;) {
-		printf("\n> ");
-		if (!fgets(line, sizeof(line), stdin)) {
-			puts("\n");
-			break;
-		}
-
-		vm_interpret(vm, line);
-	}
-
-	vm_free(vm);
-}
