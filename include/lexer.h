@@ -14,9 +14,9 @@ typedef enum {
         TK_IDENTIFIER, TK_NUMBER,
 
         // Procedures
-        TK_BANG, TK_LEFT_BRACE, TK_RIGHT_BRACE, TK_DOLLAR, TK_SEMICOLON,
+        TK_BANG, TK_LEFT_BRACE, TK_RIGHT_BRACE, TK_DOLLAR,
 
-        TK_ERROR, TK_EOF, TK_SKIP,
+        TK_EOF, TK_SKIP,
 } TokenType;
 
 // clang-format on

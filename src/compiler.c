@@ -17,14 +17,7 @@ Parser parser;
 static void advance()
 {
 	parser.previous = parser.current;
-
-	for (;;) {
-		parser.current = scan_token();
-		if (parser.current.type != TK_ERROR)
-			break;
-
-		printf("error token\n");
-	}
+	parser.current = scan_token();
 }
 
 static void error_at(Token *tk, const char *msg)

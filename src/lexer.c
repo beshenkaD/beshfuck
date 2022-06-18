@@ -31,16 +31,6 @@ static Token make_token(TokenType t)
 	return tk;
 }
 
-// static Token error_token(const char *msg)
-// {
-// 	Token tk;
-// 	tk.type = TK_ERROR;
-// 	tk.start = msg;
-// 	tk.length = strlen(msg);
-
-// 	return tk;
-// }
-
 static char advance()
 {
 	lexer.current++;
@@ -105,7 +95,6 @@ Token scan_token()
 	case ',': return make_token(TK_COMMA);
 	case '[': return make_token(TK_LEFT_SQUARE);
 	case ']': return make_token(TK_RIGHT_SQUARE);
-	case ';': return make_token(TK_SEMICOLON);
 	case '!': return make_token(TK_BANG);
 	case '{': return make_token(TK_LEFT_BRACE);
 	case '}': return make_token(TK_RIGHT_BRACE);
