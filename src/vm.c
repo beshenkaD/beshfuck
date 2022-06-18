@@ -1,7 +1,7 @@
 #include "vm.h"
 #include "compiler.h"
 #include "vm_bytecode.h"
-#include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 Vm *vm_new(size_t tape_len)
@@ -40,6 +40,12 @@ static void call(Vm *vm, Procedure *p)
 #define READ_BYTE() (*frame->ip++)
 #define READ_SHORT() (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 #define READ_CONST() (frame->proc->bc.constants.values[READ_BYTE()])
+
+#define RUNTIME_ERROR(...)                      \
+	fprintf(stderr, "[ Runtime error ]: "); \
+	fprintf(stderr, __VA_ARGS__);           \
+	fputs("\n", stderr);                    \
+	return INTERPRET_RUNTIME_ERROR;
 
 static InterpretResult run(Vm *vm)
 {
@@ -81,8 +87,12 @@ static InterpretResult run(Vm *vm)
 			break;
 		}
 		case OP_CALL: {
-			Procedure *p = (Procedure *)map_get(vm->procedures, READ_CONST());
-			assert(p);
+			char *name = READ_CONST();
+			Procedure *p = (Procedure *)map_get(vm->procedures, name);
+
+			if (!p) {
+				RUNTIME_ERROR("undefined procedure `%s`", name);
+			}
 
 			call(vm, p);
 
@@ -99,9 +109,11 @@ static InterpretResult run(Vm *vm)
 			break;
 		case OP_LOAD: {
 			// TODO: replace atoi with something less error prone
-			int num = atoi(READ_CONST());
+			char *name = READ_CONST();
+			int num = atoi(name);
+
 			if (num > UINT8_MAX || num < 0) {
-				return INTERPRET_RUNTIME_ERROR;
+				RUNTIME_ERROR("invalid number literal `%s`", name);
 			}
 
 			vm->tape[vm->pc] = (uint8_t)num;
@@ -113,6 +125,11 @@ static InterpretResult run(Vm *vm)
 
 	return INTERPRET_OK;
 }
+
+#undef READ_BYTE
+#undef READ_SHORT
+#undef READ_CONST
+#undef RUNTIME_ERROR
 
 InterpretResult vm_interpret(Vm *vm, const char *source)
 {
