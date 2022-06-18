@@ -2,6 +2,7 @@
 #include "vm.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static char *read_file(const char *path)
 {
@@ -47,4 +48,18 @@ void interpreter_do_file(const char *path)
 
 void interpreter_repl()
 {
+	Vm *vm = vm_new(30000);
+
+	char line[1024];
+	for (;;) {
+		printf("\n> ");
+		if (!fgets(line, sizeof(line), stdin)) {
+			puts("\n");
+			break;
+		}
+
+		vm_interpret(vm, line);
+	}
+
+	vm_free(vm);
 }
