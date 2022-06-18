@@ -76,13 +76,13 @@ static InterpretResult run(Vm *vm)
 			printf("%d", vm->tape[vm->pc]);
 			break;
 		case OP_JUMP_IF_ZERO: {
-			uint8_t offset = READ_SHORT();
+			uint16_t offset = READ_SHORT();
 			if (vm->tape[vm->pc] == 0)
 				frame->ip += offset;
 			break;
 		}
 		case OP_LOOP: {
-			uint8_t offset = READ_SHORT();
+			uint16_t offset = READ_SHORT();
 			frame->ip -= offset;
 			break;
 		}
