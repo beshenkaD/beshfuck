@@ -11,6 +11,7 @@ typedef enum {
 	OP_DEC,		 /*  Decrement                                -   */
 	OP_IN,		 /*  Input                                    -   */
 	OP_OUT,		 /*  Output                                   -   */
+	OP_OUT_DEC,	 /*  Output cell value in decimal                 */
 	OP_NEXT,	 /*  Next cell                                -   */
 	OP_PREV,	 /*  Previous cell                            -   */
 	OP_JUMP_IF_ZERO, /*  Jump forward                         lenght  */

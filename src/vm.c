@@ -1,5 +1,6 @@
 #include "vm.h"
 #include "compiler.h"
+#include "vm_bytecode.h"
 #include <assert.h>
 #include <stdlib.h>
 
@@ -64,6 +65,9 @@ static InterpretResult run(Vm *vm)
 			break;
 		case OP_OUT:
 			putchar(vm->tape[vm->pc]);
+			break;
+		case OP_OUT_DEC:
+			printf("%d", vm->tape[vm->pc]);
 			break;
 		case OP_JUMP_IF_ZERO: {
 			uint8_t offset = READ_SHORT();

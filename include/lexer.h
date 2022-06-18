@@ -9,6 +9,7 @@ typedef enum {
         // Simple instructions
 	TK_PLUS, TK_MINUS, TK_LEFT, TK_RIGHT, TK_EQUALS,
         TK_DOT, TK_COMMA, TK_RIGHT_SQUARE, TK_LEFT_SQUARE,
+        TK_COLON,
 
         // Literals
         TK_IDENTIFIER, TK_NUMBER,

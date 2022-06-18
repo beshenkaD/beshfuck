@@ -104,6 +104,9 @@ static void instruction(Procedure *p)
 	case TK_DOT:
 		vm_bytecode_push(&p->bc, OP_OUT);
 		break;
+	case TK_COLON:
+		vm_bytecode_push(&p->bc, OP_OUT_DEC);
+		break;
 	case TK_COMMA:
 		vm_bytecode_push(&p->bc, OP_IN);
 		break;

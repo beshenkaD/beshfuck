@@ -100,6 +100,7 @@ Token scan_token()
 	case '}': return make_token(TK_RIGHT_BRACE);
 	case '$': return make_token(TK_DOLLAR);
 	case '=': return make_token(TK_EQUALS);
+	case ':': return make_token(TK_COLON);
 	}
 
 	return make_token(TK_SKIP);
