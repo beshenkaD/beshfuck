@@ -1,6 +1,6 @@
 #include "vm.h"
 #include "compiler.h"
-#include "vm_bytecode.h"
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,15 +37,22 @@ static void call(Vm *vm, Procedure *p)
 	frame->ip = p->bc.code;
 }
 
+static void runtime_error(Vm *vm, const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+
+	fprintf(stderr, "[ Runtime error ]: ");
+	vfprintf(stderr, fmt, args);
+	fputs("\n", stderr);
+
+	va_end(args);
+	vm->frame_count = 0;
+}
+
 #define READ_BYTE() (*frame->ip++)
 #define READ_SHORT() (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 #define READ_CONST() (frame->proc->bc.constants.values[READ_BYTE()])
-
-#define RUNTIME_ERROR(...)                      \
-	fprintf(stderr, "[ Runtime error ]: "); \
-	fprintf(stderr, __VA_ARGS__);           \
-	fputs("\n", stderr);                    \
-	return INTERPRET_RUNTIME_ERROR;
 
 static InterpretResult run(Vm *vm)
 {
@@ -61,9 +68,23 @@ static InterpretResult run(Vm *vm)
 			vm->tape[vm->pc]--;
 			break;
 		case OP_NEXT:
+#ifdef ENABLE_BOUNDS_CHECK
+			if (vm->pc + 1 == vm->tape_len) {
+				runtime_error(vm, "invalid next: out of bounds");
+				return INTERPRET_RUNTIME_ERROR;
+			}
+#endif
+
 			vm->pc++;
 			break;
 		case OP_PREV:
+#ifdef ENABLE_BOUNDS_CHECK
+			if (vm->pc == 0) {
+				runtime_error(vm, "invalid prev: out of bounds");
+				return INTERPRET_RUNTIME_ERROR;
+			}
+#endif
+
 			vm->pc--;
 			break;
 		case OP_IN:
@@ -91,7 +112,8 @@ static InterpretResult run(Vm *vm)
 			Procedure *p = (Procedure *)map_get(vm->procedures, name);
 
 			if (!p) {
-				RUNTIME_ERROR("undefined procedure `%s`", name);
+				runtime_error(vm, "undefined procedure `%s`", name);
+				return INTERPRET_RUNTIME_ERROR;
 			}
 
 			call(vm, p);
@@ -113,7 +135,8 @@ static InterpretResult run(Vm *vm)
 			int num = atoi(name);
 
 			if (num > UINT8_MAX || num < 0) {
-				RUNTIME_ERROR("invalid number literal `%s`", name);
+				runtime_error(vm, "invalid number literal `%s`", name);
+				return INTERPRET_RUNTIME_ERROR;
 			}
 
 			vm->tape[vm->pc] = (uint8_t)num;
@@ -123,13 +146,12 @@ static InterpretResult run(Vm *vm)
 		}
 	}
 
-	return INTERPRET_OK;
+	return INTERPRET_RUNTIME_ERROR;
 }
 
 #undef READ_BYTE
 #undef READ_SHORT
 #undef READ_CONST
-#undef RUNTIME_ERROR
 
 InterpretResult vm_interpret(Vm *vm, const char *source)
 {

@@ -29,12 +29,15 @@ target_compile_options(beshfuck
 )
 
 option(DEBUG_PRINT "Print disassembled bytecode after compilation" OFF)
+option(ENABLE_BOUNDS_CHECK "Enable or disable beshfuck bound-checking" ON)
 
 if(DEBUG_PRINT)
-    target_compile_definitions(beshfuck PRIVATE
-        DEBUG_PRINT
-    )
+    target_compile_definitions(beshfuck PRIVATE DEBUG_PRINT)
 endif(DEBUG_PRINT)
+
+if(ENABLE_BOUNDS_CHECK)
+    target_compile_definitions(beshfuck PRIVATE ENABLE_BOUNDS_CHECK)
+endif(ENABLE_BOUNDS_CHECK)
 
 target_include_directories(beshfuck
     PRIVATE 
