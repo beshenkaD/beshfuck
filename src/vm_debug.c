@@ -16,6 +16,13 @@ static size_t operand(Bytecode *bc, const char *name, size_t offset, FILE *f)
 	return offset + 2;
 }
 
+static size_t jump(Bytecode *bc, const char *name, size_t offset, int sgn, FILE *f)
+{
+	uint16_t jmp = (uint16_t)((bc->code[offset + 1] << 8) | bc->code[offset + 2]);
+	fprintf(f, "%s %4zu -> %zu\n", name, offset, offset + 3 + sgn * jmp);
+	return offset + 3;
+}
+
 static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 {
 	fprintf(f, "%04zu ", offset);
@@ -30,6 +37,8 @@ static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 		return simple("OP_IN", offset, f);
 	case OP_OUT:
 		return simple("OP_OUT", offset, f);
+	case OP_OUT_DEC:
+		return simple("OP_OUT_DEC", offset, f);
 	case OP_NEXT:
 		return simple("OP_NEXT", offset, f);
 	case OP_PREV:
@@ -40,6 +49,10 @@ static size_t disassemble_opcode(Bytecode *bc, size_t offset, FILE *f)
 		return simple("OP_RETURN", offset, f);
 	case OP_LOAD:
 		return operand(bc, "OP_LOAD", offset, f);
+	case OP_JUMP_IF_ZERO:
+		return jump(bc, "OP_JUMP_IF_ZERO", offset, 1, f);
+	case OP_LOOP:
+		return jump(bc, "OP_LOOP", offset, -1, f);
 	}
 
 	fprintf(f, "Unknown opcode %d\n", opcode);
