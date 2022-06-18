@@ -22,8 +22,12 @@ static void advance()
 
 static void error_at(Token *tk, const char *msg)
 {
-	fprintf(stderr, "Error");
-	fprintf(stderr, " at `%.*s`", (int)tk->length, tk->start);
+	fprintf(stderr, "[ Syntax error ]");
+	if (tk->type == TK_EOF)
+		fprintf(stderr, " at end");
+	else
+		fprintf(stderr, " at `%.*s`", (int)tk->length, tk->start);
+
 	fprintf(stderr, ": %s\n", msg);
 
 	parser.had_error = true;
@@ -114,14 +118,14 @@ static void instruction(Procedure *p)
 		loop(p);
 		break;
 	case TK_RIGHT_SQUARE:
-		error("unmatched ]");
+		error("unmatched `]`");
 		break;
 	case TK_BANG:
 		if (p->name != NULL)
 			error("nested procedures are not allowed in beshfuck");
 		break;
 	case TK_RIGHT_BRACE:
-		error("unmatched }");
+		error("unmatched `}`");
 		break;
 	case TK_DOLLAR:
 		call(p);
@@ -168,13 +172,13 @@ static void loop(Procedure *p)
 	p->bc.code[exit_jump] = (jump >> 8) & 0xff;
 	p->bc.code[exit_jump + 1] = jump & 0xff;
 
-	consume(TK_RIGHT_SQUARE, "expected ] after loop body");
+	consume(TK_RIGHT_SQUARE, "expected `]` after loop body");
 }
 
 static void procedure(Vm *vm)
 {
-	char *name = parse_identifier("expected procedure name after !");
-	consume(TK_LEFT_BRACE, "expected { after procedure name");
+	char *name = parse_identifier("expected procedure name after `!`");
+	consume(TK_LEFT_BRACE, "expected `{` after procedure name");
 
 	Procedure *p = vm_procedure_new(name);
 
@@ -184,7 +188,7 @@ static void procedure(Vm *vm)
 
 	vm_bytecode_push(&p->bc, OP_RETURN);
 
-	consume(TK_RIGHT_BRACE, "expected } after procedure body");
+	consume(TK_RIGHT_BRACE, "expected `}` after procedure body");
 
 	map_set(vm->procedures, name, p);
 
@@ -193,7 +197,7 @@ static void procedure(Vm *vm)
 
 static void call(Procedure *p)
 {
-	char *name = parse_identifier("expected procedure name after $");
+	char *name = parse_identifier("expected procedure name after `$`");
 	size_t proc = vm_bytecode_add_constant(&p->bc, name);
 
 	vm_bytecode_push(&p->bc, OP_CALL);
@@ -202,7 +206,7 @@ static void call(Procedure *p)
 
 static void number(Procedure *p)
 {
-	consume(TK_NUMBER, "expected number after =");
+	consume(TK_NUMBER, "expected number after `=`");
 	char *str = copy_string(parser.previous.start, parser.previous.length);
 	size_t n = vm_bytecode_add_constant(&p->bc, str);
 
