@@ -192,7 +192,9 @@ static void procedure(Vm *vm)
 
 	map_set(vm->procedures, name, p);
 
-	// vm_debug_disassemble(&p->bc, name, NULL);
+#ifdef DEBUG_PRINT
+	vm_debug_disassemble(&p->bc, name);
+#endif
 }
 
 static void call(Procedure *p)
@@ -233,6 +235,8 @@ Procedure *compiler_do(Vm *vm, const char *source)
 
 	vm_bytecode_push(&main->bc, OP_RETURN);
 
-	// vm_debug_disassemble(&main->bc, "MAIN", NULL);
+#ifdef DEBUG_PRINT
+	vm_debug_disassemble(&main->bc, "MAIN");
+#endif
 	return parser.had_error ? NULL : main;
 }

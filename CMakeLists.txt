@@ -28,6 +28,14 @@ target_compile_options(beshfuck
     $<$<CONFIG:DEBUG>: -Wno-unused-function>
 )
 
+option(DEBUG_PRINT "Print disassembled bytecode after compilation" OFF)
+
+if(DEBUG_PRINT)
+    target_compile_definitions(beshfuck PRIVATE
+        DEBUG_PRINT
+    )
+endif(DEBUG_PRINT)
+
 target_include_directories(beshfuck
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
