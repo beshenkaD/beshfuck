@@ -34,11 +34,11 @@ static char *read_file(const char *path)
 	return buffer;
 }
 
-void interpreter_do_file(const char *path)
+void interpreter_do_file(const char *path, size_t tape_len)
 {
 	char *source = read_file(path);
 
-	Vm *vm = vm_new(30000);
+	Vm *vm = vm_new(tape_len);
 	InterpretResult res = vm_interpret(vm, source);
 	free(source);
 

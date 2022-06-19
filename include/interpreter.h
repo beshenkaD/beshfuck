@@ -2,7 +2,8 @@
 #define INTERPRETER_H
 
 #include "interpreter_repl.h"
+#include <stddef.h>
 
-void interpreter_do_file(const char *source);
+void interpreter_do_file(const char *path, size_t tape_len);
 
 #endif

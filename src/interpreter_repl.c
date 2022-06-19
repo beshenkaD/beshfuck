@@ -40,9 +40,9 @@ static void read(Vm *vm)
 }
 #endif
 
-void interpreter_repl()
+void interpreter_repl(size_t tape_len)
 {
-	Vm *vm = vm_new(30000);
+	Vm *vm = vm_new(tape_len);
 	read(vm);
 	vm_free(vm);
 }
