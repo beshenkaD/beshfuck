@@ -1,5 +1,5 @@
 # Beshfuck
-Brainfuck interpreter with procedures and threads.
+Brainfuck interpreter with procedures and some other features.
 
 ## Features
 ### Procedures
@@ -14,8 +14,6 @@ Instead of counting pluses you can use constants. It loads number into cell usin
 ```
 This program prints letter 'B' and newline.
 only values from 0 to 255 allowed (cells are unsigned 8 bit integers).
-### Threads
-Coming soon...
 
 ## Building
 Install ``cmake`` and then type:
